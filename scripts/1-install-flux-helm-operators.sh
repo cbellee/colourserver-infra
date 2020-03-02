@@ -1,3 +1,6 @@
+echo "$(terraform output kube_config)" > ./azurek8s
+export KUBECONFIG=./azurek8s
+
 helm repo add fluxcd https://charts.fluxcd.io
 kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/flux-helm-release-crd.yaml
 

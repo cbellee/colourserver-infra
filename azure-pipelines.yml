@@ -86,6 +86,7 @@ stages:
         - script: |
             echo "$(terraform output kube_config)" > ./azurek8s
             export KUBECONFIG=./azurek8s
+            pwd
             echo $KUBECONFIG
             ls $KUBECONFIG
             cat $KUBECONFIG
