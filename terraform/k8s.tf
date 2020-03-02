@@ -46,13 +46,13 @@ resource "azurerm_subnet" "subnet" {
   virtual_network_name = azurerm_virtual_network.vnet.name
 }
 
-resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
+/* resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
   name                  = "default"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.k8s.id
   vm_size               = var.agent_vm_size
   node_count            = var.agent_count
   vnet_subnet_id        = azurerm_subnet.subnet.id
-}
+} */
 
 resource "azurerm_kubernetes_cluster" "k8s" {
     name                = var.cluster_name
