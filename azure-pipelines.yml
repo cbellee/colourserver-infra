@@ -12,7 +12,7 @@ variables:
 - name: containerName
   value: 'tf-statefiles'
 - name: resourceGroupName
-  value: 'colourserver-aks-rg'
+  value: 'k8s-demo-2-rg'
 - name: state.key
   value: 'TFSTATE'
 - name: terraform.path
