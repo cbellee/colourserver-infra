@@ -17,10 +17,10 @@ resource "azurerm_log_analytics_workspace" "test" {
 
 resource "azurerm_log_analytics_solution" "test" {
     solution_name         = "ContainerInsights"
-    location              = azurerm_log_analytics_workspace.test.location
+    location              = azurerm_log_analytics_workspace.wks.location
     resource_group_name   = azurerm_resource_group.rg.name
-    workspace_resource_id = azurerm_log_analytics_workspace.test.id
-    workspace_name        = azurerm_log_analytics_workspace.test.name
+    workspace_resource_id = azurerm_log_analytics_workspace.wks.id
+    workspace_name        = azurerm_log_analytics_workspace.wks.name
 
     plan {
         publisher = "Microsoft"
@@ -82,7 +82,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
     addon_profile {
         oms_agent {
         enabled                    = true
-        log_analytics_workspace_id = azurerm_log_analytics_workspace.test.id
+        log_analytics_workspace_id = azurerm_log_analytics_workspace.wks.id
         }
     }
 
@@ -92,9 +92,9 @@ resource "azurerm_kubernetes_cluster" "k8s" {
 }
 
 output "client_certificate" {
-  value = azurerm_kubernetes_cluster.rg.kube_config.0.client_certificate
+  value = azurerm_kubernetes_cluster.k8s.kube_config.0.client_certificate
 }
 
 output "kube_config" {
-  value = azurerm_kubernetes_cluster.rg.kube_config_raw
+  value = azurerm_kubernetes_cluster.k8s.kube_config_raw
 }
