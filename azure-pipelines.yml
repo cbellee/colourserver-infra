@@ -3,16 +3,14 @@ trigger:
     include:
       - master
       - feature/*
-  paths:
-    include:
-      - 'terraform'
+
 variables:
 - name: resourceGroupName
   value: 'colourserver-aks-rg'
 - name: state.key
   value: 'TFSTATE'
 - name: terraform.path
-  value: '/terraform'
+  value: 'terraform'
 - name: terraform.version
   value: 0.12.21
 
