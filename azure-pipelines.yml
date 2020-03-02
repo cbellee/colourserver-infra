@@ -11,11 +11,26 @@ pool:
 
 steps:
 - task: Terraform@2
+  displayName: 'Terraform init && plan'
   inputs:
     TemplatePath: './terraform'
     Arguments: 'plan'
     PlanPath: './terraform/k8s.tf'
     InstallTerraform: true
+    UseAzureSub: true
+    ConnectedServiceNameSelector: 'ConnectedServiceNameARM'
+    ConnectedServiceNameARM: 'Azure CXP FTA Internal Subscription CBELLEE (b2375b5f-8dab-4436-b87c-32bc7fdce5d0)'
+    ManageState: true
+    SpecifyStorageAccount: true
+    StorageAccountResourceGroup: 'terraform-rg'
+    StorageAccountRM: 'stortf38f883'
+    StorageContainerName: 'tfstate'
+
+- task: Terraform@2
+  displayName: 'Terraform apply -auto-approve'
+  inputs:
+    TemplatePath: './terraform'
+    Arguments: 'apply -auto-approve'
     UseAzureSub: true
     ConnectedServiceNameSelector: 'ConnectedServiceNameARM'
     ConnectedServiceNameARM: 'Azure CXP FTA Internal Subscription CBELLEE (b2375b5f-8dab-4436-b87c-32bc7fdce5d0)'
