@@ -72,3 +72,4 @@ stages:
             TF_ACC=true terraform destroy
           displayName: 'Terraform Destroy'
           workingDirectory: '$(terraform.path)'
+          enabled: false
