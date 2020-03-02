@@ -1,4 +1,4 @@
-resource "azurerm_resource_group" "k8s" {
+resource "azurerm_resource_group" "rg" {
     name     = var.resource_group_name
     location = var.location
 }
@@ -11,14 +11,14 @@ resource "azurerm_log_analytics_workspace" "test" {
     # The WorkSpace name has to be unique across the whole of azure, not just the current subscription/tenant.
     name                = "${var.log_analytics_workspace_name}-${random_id.log_analytics_workspace_name_suffix.dec}"
     location            = var.log_analytics_workspace_location
-    resource_group_name = azurerm_resource_group.k8s.name
+    resource_group_name = azurerm_resource_group.rg.name
     sku                 = var.log_analytics_workspace_sku
 }
 
 resource "azurerm_log_analytics_solution" "test" {
     solution_name         = "ContainerInsights"
     location              = azurerm_log_analytics_workspace.test.location
-    resource_group_name   = azurerm_resource_group.k8s.name
+    resource_group_name   = azurerm_resource_group.rg.name
     workspace_resource_id = azurerm_log_analytics_workspace.test.id
     workspace_name        = azurerm_log_analytics_workspace.test.name
 
@@ -28,11 +28,36 @@ resource "azurerm_log_analytics_solution" "test" {
     }
 }
 
+resource "azurerm_virtual_network" "vnet" {
+  name                = "aks-vnet"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  address_space       = ["10.0.0.0/16"]
+
+  tags = {
+    environment = "Development"
+  }
+}
+
+resource "azurerm_subnet" "subnet" {
+  name                 = "aks-subnet-0"
+  resource_group_name  = azurerm_resource_group.rg.name
+  address_prefix       = "10.0.1.0/24"
+  virtual_network_name = azurerm_virtual_network.rg.name
+}
+
 resource "azurerm_kubernetes_cluster" "k8s" {
     name                = var.cluster_name
-    location            = azurerm_resource_group.k8s.location
-    resource_group_name = azurerm_resource_group.k8s.name
+    location            = azurerm_resource_group.rg.location
+    resource_group_name = azurerm_resource_group.rg.name
     dns_prefix          = var.dns_prefix
+
+    network_profile {
+    network_plugin     = "azure"
+    dns_service_ip     = "10.0.0.10"
+    docker_bridge_cidr = "172.17.0.1/16"
+    service_cidr       = "10.0.1.0/24"
+  }
 
     linux_profile {
         admin_username = "ubuntu"
@@ -46,6 +71,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
         name            = "agentpool"
         node_count      = var.agent_count
         vm_size         = "Standard_DS1_v2"
+        vnet_subnet_id = azurerm_subnet.subnet.id
     }
 
     service_principal {
@@ -63,4 +89,12 @@ resource "azurerm_kubernetes_cluster" "k8s" {
     tags = {
         Environment = "Development"
     }
+}
+
+output "client_certificate" {
+  value = azurerm_kubernetes_cluster.rg.kube_config.0.client_certificate
+}
+
+output "kube_config" {
+  value = azurerm_kubernetes_cluster.rg.kube_config_raw
 }
