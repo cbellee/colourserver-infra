@@ -20,6 +20,10 @@ variable cluster_name {
     default = "k8s-demo-1"
 }
 
+variable agent_vm_size {
+    default="Standard_DS1_v2"
+}
+
 variable resource_group_name {
     default = "k8s-demo-1-rg"
 }

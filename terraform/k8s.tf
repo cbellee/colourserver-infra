@@ -49,7 +49,7 @@ resource "azurerm_subnet" "subnet" {
 resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
   name                  = "default"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.k8s.id
-  vm_size               = "Standard_DS1_v2"
+  vm_size               = var.agent_vm_size
   node_count            = var.agent_count
   vnet_subnet_id        = azurerm_subnet.subnet.id
 }
@@ -71,6 +71,12 @@ resource "azurerm_kubernetes_cluster" "k8s" {
         ssh_key {
             key_data = file(var.ssh_public_key)
         }
+    }
+
+    default_node_pool {
+      name = "default-node-pool"
+      vm_size = var.agent_vm_size
+      node_count = var.agent_count
     }
 
     service_principal {
