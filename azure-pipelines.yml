@@ -73,7 +73,12 @@ stages:
             export KUBECONFIG=./azurek8s
           displayName: 'Terraform Apply'
           workingDirectory: '$(terraform.path)'
-
+            
+        - task: HelmInstaller@1
+          displayName: 'Install Helm'
+          inputs:
+            helmVersionToInstall: 'latest'
+            
         - script: |
             helm repo add fluxcd https://charts.fluxcd.io
             kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml
@@ -102,12 +107,7 @@ stages:
             helm install demo-nginx-ingress stable/nginx-ingress
           displayName: 'Install Flux & Helm Operator'
           workingDirectory: '$(terraform.path)'
-            
-        - task: HelmInstaller@1
-          displayName: 'Install Helm'
-          inputs:
-            helmVersionToInstall: 'latest'
-            
+
         - task: Bash@3 
           displayName: 'Install Flux & Helm Operator'
           enabled: false
