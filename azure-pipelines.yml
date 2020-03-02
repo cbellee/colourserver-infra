@@ -14,7 +14,7 @@ steps:
   inputs:
     TemplatePath: './terraform'
     Arguments: 'plan'
-    PlanPath: './terraform'
+    PlanPath: './terraform/k8s.tf'
     InstallTerraform: true
     UseAzureSub: true
     ConnectedServiceNameSelector: 'ConnectedServiceNameARM'
