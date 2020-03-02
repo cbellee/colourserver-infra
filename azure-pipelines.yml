@@ -60,10 +60,10 @@ stages:
 
         - script: |
             TF_ACC=true terraform plan -out=tfplan -no-color -input=false -var-file=terraform.tfvars
-            displayName: 'Terraform Plan'
+          displayName: 'Terraform Plan'
           workingDirectory: '$(terraform.path)'
 
         - script: |
-            
+            TF_ACC=true terraform apply -auto-approve
           displayName: 'Terraform Apply'
           workingDirectory: '$(terraform.path)'
