@@ -1,1 +1,1 @@
-helm install go-nginx stable/nginx-ingress
+helm install demo-nginx-ingress stable/nginx-ingress
