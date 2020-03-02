@@ -67,3 +67,8 @@ stages:
             TF_ACC=true terraform apply -auto-approve
           displayName: 'Terraform Apply'
           workingDirectory: '$(terraform.path)'
+
+        - script: |
+            TF_ACC=true terraform destroy
+          displayName: 'Terraform Destroy'
+          workingDirectory: '$(terraform.path)'
