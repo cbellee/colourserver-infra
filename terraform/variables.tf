@@ -16,11 +16,11 @@ variable "ssh_public_key" {
 }
 
 variable "dns_prefix" {
-    default = "k8s-demo-2"
+    default = "k8s-demo"
 }
 
 variable cluster_name {
-    default = "k8s-demo-2"
+    default = "k8s-demo"
 }
 
 variable agent_vm_size {
@@ -28,7 +28,7 @@ variable agent_vm_size {
 }
 
 variable resource_group_name {
-    default = "k8s-demo-2-rg"
+    default = "k8s-demo-rg"
 }
 
 variable location {
