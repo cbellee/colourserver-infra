@@ -19,8 +19,6 @@ variables:
 
 stages:
 - stage: 'resource_deployment_stage'
-  variables: 
-    resourceGroupName: $(resourceGroupName)
   displayName: 'AKS environment deployment'
   jobs:
     - job: 'resource_deployment_job'
@@ -37,6 +35,7 @@ stages:
             ACCESS_KEY=`az storage account keys list -n $(STORAGE-ACCOUNT) -o json | jq -r '.[0].value'`
             echo "##vso[task.setvariable variable=ACCESS_KEY]$ACCESS_KEY"
           displayName: 'Login & get storage account access key'
+          workingDirectory: '$(terraform.path)'
 
         - script: |
             cat << EOT >> terraform.tfvars
@@ -50,19 +49,20 @@ stages:
 
         - script: |
             terraform init -backend-config=resource_group_name=$(resourceGroupName) -backend-config=storage_account_name=$(STORAGE-ACCOUNT) -backend-config=container_name=tf-statefiles -backend-config=key=$(state.key) -backend-config=access_key=$(ACCESS_KEY) -no-color -input=false
-            terraform plan -out=tfplan -no-color -input=false
           displayName: 'Terraform Init'
+          workingDirectory: '$(terraform.path)'
 
         - script: | 
             terraform validate
-          workingDirectory: '$(terraform.path)'
           displayName: 'Validate tf files'
+          workingDirectory: '$(terraform.path)'
 
         - script: |
             terraform plan -out=tfplan -no-color -input=false
           displayName: 'Terraform Plan'
+          workingDirectory: '$(terraform.path)'
 
         - script: |
             terraform apply -auto-approve
-          workingDirectory: '$(terraform.path)'
           displayName: 'Terraform Apply'
+          workingDirectory: '$(terraform.path)'
