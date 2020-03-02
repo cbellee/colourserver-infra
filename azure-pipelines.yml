@@ -49,7 +49,7 @@ stages:
           displayName: 'Terraform create tfvars file'
 
         - script: | 
-            terraform validate -check-variables=false
+            terraform validate
           workingDirectory: '$(terraform.path)'
           displayName: 'Validate tf files'
 
