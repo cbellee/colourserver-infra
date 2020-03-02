@@ -45,6 +45,7 @@ stages:
             client_secret = "$(SPN-SECRET)"
             EOT
           displayName: 'Terraform create tfvars file'
+          workingDirectory: '$(terraform.path)'
 
         - script: |
             terraform init -backend-config=resource_group_name=$(resourceGroupName) -backend-config=storage_account_name=$(STORAGE-ACCOUNT) -backend-config=container_name=$(containerName) -backend-config=key=$(state.key) -backend-config=access_key=$(ACCESS_KEY) -no-color -input=false
