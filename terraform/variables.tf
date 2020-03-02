@@ -8,6 +8,9 @@ variable "agent_count" {
     default = 3
 }
 
+variable aks_version {
+    default = "1.15.7"
+}
 variable "ssh_public_key" {
     default = "./id_rsa.pub"
 }
