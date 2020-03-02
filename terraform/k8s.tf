@@ -65,12 +65,16 @@ resource "azurerm_kubernetes_cluster" "k8s" {
         }
     }
 
-    default_node_pool {
-        name            = "agentpool"
-        node_count      = var.agent_count
-        vm_size         = "Standard_DS1_v2"
-        vnet_subnet_id = azurerm_subnet.subnet.id
-    }
+    agent_pool_profile {
+    name            = "agentpool"
+    count           = var.agent_count
+    vm_size         = "Standard_DS1_v2"
+    os_type         = "Linux"
+    os_disk_size_gb = 100
+
+    # Required for advanced networking
+    vnet_subnet_id = azurerm_subnet.subnet.id
+  }
 
     service_principal {
         client_id     = var.client_id
