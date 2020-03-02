@@ -1,51 +1,58 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- master
-
+  batch: true
+  branches:
+    include:
+      - master
+      - feature/*
+  paths:
+    include:
+      - '/terraform'
 variables:
-  vm-image-name: 'ubuntu-latest'
+- name: state.key
+  value: 'TFSTATE'
+- name: terraform.path
+  value: 'terraform'
+- name: terraform.version
+  value: 2.0
 
-jobs:
-- deployment: Terraform_Plan_Apply
-  displayName: 'Terraform Infra Build'
-  pool:
-    vmImage: $(vm-image-name)
-  environment: 'dev'
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-          - task: Terraform@2
-            displayName: 'Terraform init && plan'
-            inputs:
-              TemplatePath: './terraform'
-              Arguments: 'plan'
-              PlanPath: './terraform/k8s.tf'
-              InstallTerraform: true
-              UseAzureSub: true
-              ConnectedServiceNameSelector: 'ConnectedServiceNameARM'
-              ConnectedServiceNameARM: 'Azure CXP FTA Internal Subscription CBELLEE (b2375b5f-8dab-4436-b87c-32bc7fdce5d0)'
-              ManageState: true
-              SpecifyStorageAccount: true
-              StorageAccountResourceGroup: 'terraform-rg'
-              StorageAccountRM: 'stortf38f883'
-              StorageContainerName: 'tfstate'
+steps:
+  - checkout: self
+  clean: true
+  persistCredentials: true
+    - task: JamiePhillips.Terraform.TerraformTool.TerraformTool@0
+      displayName: 'Use Terraform $(terraform.version)'
+      inputs:
+        version: '$(terraform.version)'
 
-          - task: Terraform@2
-            displayName: 'Terraform apply -auto-approve'
-            inputs:
-              TemplatePath: './terraform'
-              Arguments: 'apply -auto-approve'
-              UseAzureSub: true
-              ConnectedServiceNameSelector: 'ConnectedServiceNameARM'
-              ConnectedServiceNameARM: 'Azure CXP FTA Internal Subscription CBELLEE (b2375b5f-8dab-4436-b87c-32bc7fdce5d0)'
-              ManageState: true
-              SpecifyStorageAccount: true
-              StorageAccountResourceGroup: 'terraform-rg'
-              StorageAccountRM: 'stortf38f883'
-              StorageContainerName: 'tfstate' 
+    - script: |
+      az login --service-principal -u $(SPN-ID) -p $(SPN-SECRET) --tenant $(TENANT-ID)
+      ACCESS_KEY=`az storage account keys list -n $(STORAGE_ACCOUNT) -o json | jq -r '.[0].value'`
+      echo "##vso[task.setvariable variable=ACCESS_KEY]$ACCESS_KEY"
+      displayName: 'AZ Login and Set ACCESS_KEY'
+      
+    - script: |
+      cat << EOT >> terraform.tfvars
+      access_key = "$(ACCESS_KEY)"
+      tenant_id = "$(TENANT-ID)"
+      subscription_id = "$(SUBSCRIPTION-ID)"
+      client_id = "$(SPN-ID)"
+      client_secret = "$(SPN-SECRET)"
+      EOT
+      workingDirectory: '$(terraform.path)'
+      displayName: 'Create terraform.tfvars'
 
+    - script: |
+      terraform validate -check-variables=false
+      workingDirectory: '$(terraform.path)'
+      displayName: 'Terraform Validate'
+
+    - script: |
+      terraform init -backend-config=resource_group_name=$(RESOURCE_GROUP) -backend-config=storage_account_name=$(STORAGE_ACCOUNT) -backend-config=container_name=tf-statefiles -backend-config=key=$(state.key) -backend-config=access_key=$(ACCESS_KEY) -no-color -input=false
+      terraform plan -out=tfplan -no-color -input=false
+      displayName: 'Terraform Plan'
+      workingDirectory: '$(terraform.path)'
+      
+    - script: |
+      terraform apply -auto-approve
+      displayName: 'Terraform Apply'
+      workingDirectory: '$(terraform.path)'
