@@ -84,8 +84,8 @@ stages:
             arguments: 'pod'
 
         - script: |
-            echo "$(terraform output kube_config)" > ./azurek8s
-            export KUBECONFIG=../terrafom/azurek8s
+            echo "$(terraform output kube_config)" > /terraform/azurek8s
+            export KUBECONFIG=/terrafom/azurek8s
             pwd
             echo $KUBECONFIG
             ls $KUBECONFIG
