@@ -13,7 +13,7 @@ variables:
 - name: state.key
   value: 'TFSTATE'
 - name: terraform.path
-  value: 'terraform'
+  value: '/terraform'
 - name: terraform.version
   value: 0.12.21
 
