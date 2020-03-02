@@ -5,6 +5,8 @@ trigger:
       - feature/*
 
 variables:
+- name: containerName
+  value: 'tf-statefiles'
 - name: resourceGroupName
   value: 'colourserver-aks-rg'
 - name: state.key
@@ -45,13 +47,13 @@ stages:
           displayName: 'Terraform create tfvars file'
 
         - script: |
-            terraform init -backend-config=resource_group_name=$(resourceGroupName) -backend-config=storage_account_name=$(STORAGE-ACCOUNT) -backend-config=container_name=tf-statefiles -backend-config=key=$(state.key) -backend-config=access_key=$(ACCESS_KEY) -no-color -input=false
+            terraform init -backend-config=resource_group_name=$(resourceGroupName) -backend-config=storage_account_name=$(STORAGE-ACCOUNT) -backend-config=container_name=$(containerName) -backend-config=key=$(state.key) -backend-config=access_key=$(ACCESS_KEY) -no-color -input=false
           displayName: 'Terraform Init'
           workingDirectory: '$(terraform.path)'
 
         - script: | 
-            terraform validate
-          displayName: 'Validate tf files'
+            terraform validate $(terraform.path)
+          displayName: 'Terraform Validate'
           workingDirectory: '$(terraform.path)'
 
         - script: |
