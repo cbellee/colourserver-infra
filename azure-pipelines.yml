@@ -34,7 +34,7 @@ stages:
         
         - script: |
             az login --service-principal -u $(SPN-ID) -p $(SPN-SECRET) --tenant $(TENANT-ID)
-            ACCESS_KEY=`az storage account keys list -n $(STORAGE_ACCOUNT) -o json | jq -r '.[0].value'`
+            ACCESS_KEY=`az storage account keys list -n $(STORAGE-ACCOUNT) -o json | jq -r '.[0].value'`
             echo "##vso[task.setvariable variable=ACCESS_KEY]$ACCESS_KEY"
           displayName: 'Login & get storage account access key'
 
