@@ -53,17 +53,17 @@ stages:
           workingDirectory: '$(terraform.path)'
 
         - script: | 
-            terraform validate $(terraform.path)
-          displayName: 'Terraform Validate'
+            TF_ACC=true terraform validate $(terraform.path)
+            displayName: 'Terraform Validate'
           workingDirectory: '$(terraform.path)'
           enabled: false
 
         - script: |
-            terraform plan -out=tfplan -no-color -input=false -var-file=terraform.tfvars
-          displayName: 'Terraform Plan'
+            TF_ACC=true terraform plan -out=tfplan -no-color -input=false -var-file=terraform.tfvars
+            displayName: 'Terraform Plan'
           workingDirectory: '$(terraform.path)'
 
         - script: |
-            terraform apply -auto-approve
+            
           displayName: 'Terraform Apply'
           workingDirectory: '$(terraform.path)'
