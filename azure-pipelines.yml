@@ -82,6 +82,12 @@ stages:
             useClusterAdmin: true
             command: 'get'
             arguments: 'pod'
+
+        - script: |
+            echo "$(terraform output kube_config)" > ./azurek8s
+            export KUBECONFIG=./azurek8s
+          displayName: 'Get Kube Config file'
+          workingDirectory: '$(terraform.path)'
             
         - task: HelmInstaller@1
           displayName: 'Install Helm'
