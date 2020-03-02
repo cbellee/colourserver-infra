@@ -68,6 +68,10 @@ stages:
           displayName: 'Terraform Apply'
           workingDirectory: '$(terraform.path)'
 
+        - task: HelmInstaller@1
+          inputs:
+            helmVersionToInstall: 'latest'
+            
         - task: Bash@3 
           displayName: 'Install Flux & Helm Operator'
           inputs:
