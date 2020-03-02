@@ -46,6 +46,14 @@ resource "azurerm_subnet" "subnet" {
   virtual_network_name = azurerm_virtual_network.vnet.name
 }
 
+resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
+  name                  = "default"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.k8s.id
+  vm_size               = "Standard_DS1_v2"
+  node_count            = var.agent_count
+  vnet_subnet_id        = azurerm_subnet.subnet.id
+}
+
 resource "azurerm_kubernetes_cluster" "k8s" {
     name                = var.cluster_name
     location            = azurerm_resource_group.rg.location
@@ -53,9 +61,9 @@ resource "azurerm_kubernetes_cluster" "k8s" {
     dns_prefix          = var.dns_prefix
 
     network_profile {
-    network_plugin     = "azure"
-    load_balancer_sku = "standard"
-  }
+      network_plugin     = "azure"
+      load_balancer_sku = "standard"
+    }
 
     linux_profile {
         admin_username = "ubuntu"
@@ -65,17 +73,6 @@ resource "azurerm_kubernetes_cluster" "k8s" {
         }
     }
 
-    agent_pool_profile {
-    name            = "agentpool"
-    count           = var.agent_count
-    vm_size         = "Standard_DS1_v2"
-    os_type         = "Linux"
-    os_disk_size_gb = 100
-
-    # Required for advanced networking
-    vnet_subnet_id = azurerm_subnet.subnet.id
-  }
-
     service_principal {
         client_id     = var.client_id
         client_secret = var.client_secret
@@ -83,8 +80,8 @@ resource "azurerm_kubernetes_cluster" "k8s" {
 
     addon_profile {
         oms_agent {
-        enabled                    = true
-        log_analytics_workspace_id = azurerm_log_analytics_workspace.wks.id
+          enabled                    = true
+          log_analytics_workspace_id = azurerm_log_analytics_workspace.wks.id
         }
     }
 
