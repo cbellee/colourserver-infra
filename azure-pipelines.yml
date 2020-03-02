@@ -53,35 +53,35 @@ stages:
           workingDirectory: '$(terraform.path)'
 
         - script: | 
-            TF_ACC=true terraform validate $(terraform.path)
+            terraform validate $(terraform.path)
             displayName: 'Terraform Validate'
           workingDirectory: '$(terraform.path)'
           enabled: false
 
         - script: |
-            TF_ACC=true terraform plan -out=tfplan -no-color -input=false -var-file=terraform.tfvars
+            terraform plan -out=tfplan -no-color -input=false -var-file=terraform.tfvars
           displayName: 'Terraform Plan'
           workingDirectory: '$(terraform.path)'
 
         - script: |
-            TF_ACC=true terraform apply -auto-approve
+            terraform apply -auto-approve
           displayName: 'Terraform Apply'
           workingDirectory: '$(terraform.path)'
 
         - task: Bash@3 
           displayName: 'Install Flux & Hwlm Operator'
           inputs:
-            filePath: /scripts/1-install-flux-helm-operators.sh
+            filePath: ../scripts/1-install-flux-helm-operators.sh
             targetType: filePath
 
         - task: Bash@3 
           displayName: 'Install Ingress Controller'
           inputs:
-            filePath: /scripts/1-install-flux-helm-operators.sh
+            filePath: ../scripts/1-install-flux-helm-operators.sh
             targetType: filePath
 
         - script: |
-            TF_ACC=true terraform destroy
+            terraform destroy
           displayName: 'Terraform Destroy'
           workingDirectory: '$(terraform.path)'
           enabled: false
