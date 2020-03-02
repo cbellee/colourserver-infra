@@ -71,7 +71,10 @@ stages:
             terraform apply -auto-approve
             echo "$(terraform output kube_config)" > ./azurek8s
             export KUBECONFIG=./azurek8s
+          displayName: 'Terraform Apply'
+          workingDirectory: '$(terraform.path)'
 
+        - script: |
             helm repo add fluxcd https://charts.fluxcd.io
             kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml
 
@@ -97,7 +100,7 @@ stages:
             fluxctl identity
 
             helm install demo-nginx-ingress stable/nginx-ingress
-          displayName: 'Terraform Apply'
+          displayName: 'Install Flux & Helm Operator'
           workingDirectory: '$(terraform.path)'
             
         - task: HelmInstaller@1
