@@ -68,6 +68,18 @@ stages:
           displayName: 'Terraform Apply'
           workingDirectory: '$(terraform.path)'
 
+        - task: Bash@3 
+          displayName: 'Install Flux & Hwlm Operator'
+          inputs:
+            filePath: /scripts/1-install-flux-helm-operators.sh
+            targetType: filePath
+
+        - task: Bash@3 
+          displayName: 'Install Ingress Controller'
+          inputs:
+            filePath: /scripts/1-install-flux-helm-operators.sh
+            targetType: filePath
+
         - script: |
             TF_ACC=true terraform destroy
           displayName: 'Terraform Destroy'
