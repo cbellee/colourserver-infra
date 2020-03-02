@@ -15,7 +15,7 @@ variables:
 - name: terraform.path
   value: 'terraform'
 - name: terraform.version
-  value: 2.0
+  value: 0.12.21
 
 stages:
 - stage: 'resource_deployment'
