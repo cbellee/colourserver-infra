@@ -69,15 +69,15 @@ stages:
           workingDirectory: '$(terraform.path)'
 
         - task: Bash@3 
-          displayName: 'Install Flux & Hwlm Operator'
+          displayName: 'Install Flux & Helm Operator'
           inputs:
-            filePath: ../scripts/1-install-flux-helm-operators.sh
+            filePath: ./scripts/1-install-flux-helm-operators.sh
             targetType: filePath
 
         - task: Bash@3 
           displayName: 'Install Ingress Controller'
           inputs:
-            filePath: ../scripts/1-install-flux-helm-operators.sh
+            filePath: ./scripts/1-install-flux-helm-operators.sh
             targetType: filePath
 
         - script: |
