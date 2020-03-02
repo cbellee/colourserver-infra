@@ -68,7 +68,7 @@ stages:
           workingDirectory: '$(terraform.path)'
 
         - script: |
-            terraform apply -auto-approve
+            terraform apply tfplan -auto-approve
           displayName: 'Terraform Apply'
           workingDirectory: '$(terraform.path)'
 
@@ -85,7 +85,7 @@ stages:
 
         - script: |
             echo "$(terraform output kube_config)" > ./azurek8s
-            export KUBECONFIG=./azurek8s
+            export KUBECONFIG=./terraform/azurek8s
           displayName: 'Get Kube Config file'
           workingDirectory: '$(terraform.path)'
             
