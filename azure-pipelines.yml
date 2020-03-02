@@ -13,8 +13,8 @@ jobs:
 - deployment: Terraform_Plan_Apply
   displayName: 'Terraform Infra Build'
   pool:
-    vmImage: $(vm_image_name)
-    environment: 'dev'
+    vmImage: $(vm-image-name)
+  environment: 'dev'
   strategy:
     runOnce:
       deploy:
