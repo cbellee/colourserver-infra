@@ -13,15 +13,15 @@ variable "ssh_public_key" {
 }
 
 variable "dns_prefix" {
-    default = "k8s-demo"
+    default = "k8s-demo-1"
 }
 
 variable cluster_name {
-    default = "k8s-demo"
+    default = "k8s-demo-1"
 }
 
 variable resource_group_name {
-    default = "k8s-demo-rg"
+    default = "k8s-demo-1-rg"
 }
 
 variable location {
