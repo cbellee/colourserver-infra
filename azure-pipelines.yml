@@ -68,7 +68,7 @@ stages:
           workingDirectory: '$(terraform.path)'
 
         - script: |
-            terraform apply tfplan -auto-approve
+            terraform apply -auto-approve
           displayName: 'Terraform Apply'
           workingDirectory: '$(terraform.path)'
 
