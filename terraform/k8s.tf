@@ -74,7 +74,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
     }
 
     default_node_pool {
-      name = "default-node-pool"
+      name = "default"
       vm_size = var.agent_vm_size
       node_count = var.agent_count
     }
