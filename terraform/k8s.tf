@@ -54,9 +54,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
 
     network_profile {
     network_plugin     = "azure"
-    dns_service_ip     = "10.0.0.10"
-    docker_bridge_cidr = "172.17.0.1/16"
-    service_cidr       = "10.0.1.0/24"
+    load_balancer_sku = "standard"
   }
 
     linux_profile {
