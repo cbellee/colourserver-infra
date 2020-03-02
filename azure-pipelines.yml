@@ -5,6 +5,10 @@ trigger:
       - feature/*
 
 variables:
+- name: serviceConnection
+  value: 'Azure CXP FTA Internal Subscription CBELLEE (b2375b5f-8dab-4436-b87c-32bc7fdce5d0)'
+- name: aksClusterName
+  value: 'k8s-demo-2' 
 - name: containerName
   value: 'tf-statefiles'
 - name: resourceGroupName
@@ -68,6 +72,23 @@ stages:
           displayName: 'Terraform Apply'
           workingDirectory: '$(terraform.path)'
 
+        - task: Kubernetes@1
+          displayName: 'Kubectl version'
+          inputs:
+            connectionType: 'Azure Resource Manager'
+            azureSubscriptionEndpoint: $(serviceConnection)
+            azureResourceGroup: $(resourceGroupName)
+            kubernetesCluster: $(aksClusterName)
+            useClusterAdmin: true
+            command: 'get'
+            arguments: 'pod'
+            
+
+        - task: HelmInstaller@1
+          displayName: 'Install Helm'
+          inputs:
+            helmVersionToInstall: 'latest'
+            
         - task: Bash@3 
           displayName: 'Install Flux & Helm Operator'
           inputs:
